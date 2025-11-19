@@ -1,0 +1,56 @@
+.accesorios-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.accesorio-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fdd88a !important;
+  border-color: #fdd88a !important; /* Borde color accent */
+}
+
+.accesorio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-wrapper {
+  width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+}
+
+.accesorio-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-bottom: 2px solid #ffbf3f;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.accesorio-body {
+  padding: 1.25rem;
+}
+
+.accesorio-body h5 {
+  color: #555;
+}
+
+.accesorio-body p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.accesorios-container h1 {
+  color: #1a1a1a;
+}
+
+.accesorios-container p {
+  color: #777;
+}

@@ -1,0 +1,20 @@
+.admin-dashboard .sidebar {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+}
+
+.admin-dashboard .nav-link {
+    border: none;
+    background: none;
+    padding: 15px 20px;
+    transition: all 0.3s;
+}
+
+.admin-dashboard .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-dashboard .nav-link.active {
+    font-weight: bold;
+}

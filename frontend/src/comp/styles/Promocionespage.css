@@ -1,0 +1,47 @@
+.promociones-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.novedades-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+}
+
+.novedades-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-wrapper {
+  width: 100%;
+  height: 280px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+}
+
+.novedades-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  object-position: center; 
+  border-bottom: 2px solid #eee;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.novedades-body {
+  padding: 1.25rem;
+}
+
+.novedades-body h5 {
+  color: #222;
+}
+
+.novedades-body p {
+  color: #555;
+  font-size: 0.95rem;
+}

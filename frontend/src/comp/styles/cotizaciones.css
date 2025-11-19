@@ -1,0 +1,118 @@
+/* Contenedor principal con esquinas redondeadas y color de fondo */
+.cotizaciones-card {
+  border-radius: 30px !important;
+  background-color: #fedea0 !important;
+  border: none;
+  overflow: hidden;
+}
+
+/* Header de la tarjeta */
+.cotizaciones-header {
+  background-color: #333 !important;
+  border-bottom: none;
+  padding: 1.5rem 2rem;
+  border-radius: 30px 30px 0 0 !important;
+}
+
+/* Botones personalizados */
+.boton-personalizado {
+  background-color: #ffbf3f !important;
+  border-color: #ffbf3f !important;
+  border-radius: 25px !important;
+  padding: 12px 30px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  color: #333 !important;
+}
+
+.boton-personalizado:hover {
+  background-color: #e6ac39 !important;
+  border-color: #e6ac39 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para los selects del formulario */
+.form-select-personalizado {
+  border-radius: 15px !important;
+  border: 2px solid #ddd;
+  padding: 12px 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-select-personalizado:focus {
+  border-color: #ffbf3f;
+  box-shadow: 0 0 0 0.2rem rgba(255, 191, 63, 0.25);
+}
+
+/* Etiquetas del formulario */
+.form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* Tarjeta de información */
+.info-card {
+  border-radius: 20px !important;
+  background-color: #ffffff !important;
+  border: 2px solid #ffbf3f;
+}
+
+.info-titulo {
+  color: #333;
+  font-weight: 600;
+}
+
+.info-lista {
+  color: #555;
+  padding-left: 1.2rem;
+}
+
+.info-lista li {
+  margin-bottom: 8px;
+}
+
+.info-nota {
+  font-size: 0.9rem;
+}
+
+/* Alert de resultado */
+.resultado-alert {
+  border-radius: 20px !important;
+  border: none;
+  background-color: #ffffff !important;
+}
+
+.valor-final {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+/* Efectos hover para las tarjetas */
+.cotizaciones-card:hover,
+.info-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cotizaciones-card {
+    border-radius: 20px !important;
+    margin: 0 10px;
+  }
+
+  .cotizaciones-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .boton-personalizado {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
