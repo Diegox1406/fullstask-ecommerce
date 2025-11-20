@@ -18,7 +18,7 @@ exports.getCotizacionById = async (req, res) => {
   try {
     const cotizacion = await Cotizacion.findById(req.params.id).populate(
       "cotizaciones",
-      "marca modelo año almacenamiento condicion email"
+      "marca modelo año almacenamiento precioModelo"
     );
 
     if (!cotizacion) {

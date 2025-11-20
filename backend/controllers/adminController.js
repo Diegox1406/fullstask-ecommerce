@@ -123,7 +123,7 @@ exports.createCotizacion = async (req, res) => {
     });
   }
 
-  const { marca, modelo, año, almacenamiento, estado, email } = req.body;
+  const { marca, modelo, año, almacenamiento, precioModelo, estado } = req.body;
 
   try {
     const cotizacion = new Cotizacion({
@@ -131,8 +131,8 @@ exports.createCotizacion = async (req, res) => {
       modelo,
       año,
       almacenamiento,
+      precioModelo,
       estado: true, // activo por defecto
-      email,
     });
 
     const createdCotizacion = await cotizacion.save();
@@ -301,26 +301,28 @@ exports.deleteCotizacion = async (req, res) => {
 // @route   PUT /api/admin/cotizacion/:id
 exports.updateCotizacion = async (req, res) => {
   try {
-    const cotizacion = await cotizacion.findById(req.params.id);
+    const cotizacionToUpdate = await Cotizacion.findById(req.params.id);
 
-    if (!cotizacion) {
+    if (!cotizacionToUpdate) {
       return res.status(404).json({ message: "Cotizacion no encontrada" });
     }
 
-    // Actualizar los campos de texto
-    cotizacion.marca = req.body.marca || cotizacion.marca;
-    cotizacion.modelo = req.body.modelo || cotizacion.modelo;
-    cotizacion.año = req.body.año || cotizacion.año;
-    cotizacion.almacenamiento =
-      req.body.almacenamiento || cotizacion.almacenamiento;
-    cotizacion.estado =
-      req.body.estado !== undefined ? req.body.estado : cotizacion.estado;
-    cotizacion.email = req.body.email || cotizacion.email;
+    // Actualizar los campos (email removed)
+    cotizacionToUpdate.marca = req.body.marca || cotizacionToUpdate.marca;
+    cotizacionToUpdate.modelo = req.body.modelo || cotizacionToUpdate.modelo;
+    cotizacionToUpdate.año = req.body.año || cotizacionToUpdate.año;
+    cotizacionToUpdate.almacenamiento =
+      req.body.almacenamiento || cotizacionToUpdate.almacenamiento;
+    cotizacionToUpdate.precioModelo =
+      req.body.precioModelo || cotizacionToUpdate.precioModelo;
+    cotizacionToUpdate.estado =
+      req.body.estado !== undefined
+        ? req.body.estado
+        : cotizacionToUpdate.estado;
 
-    const updatedCotizacion = await cotizacion.save();
+    const updatedCotizacion = await cotizacionToUpdate.save();
     res.json(updatedCotizacion);
   } catch (error) {
-    // --- MANEJO DE ERROR MEJORADO ---
     console.error("ERROR AL ACTUALIZAR COTIZACION:", error);
     res.status(500).json({
       message: "Error al actualizar cotizacion",

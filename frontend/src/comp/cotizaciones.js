@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -10,6 +10,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import emailjs from "emailjs-com";
+import { getAllCotizaciones } from "../services/api";
 import "./styles/cotizaciones.css";
 
 function Cotizaciones() {
@@ -28,98 +29,111 @@ function Cotizaciones() {
   const [enviando, setEnviando] = useState(false);
   const [emailEnviado, setEmailEnviado] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
+  const [cotizaciones, setCotizaciones] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Base de datos de teléfonos
-  const baseDatosTelefonos = {
-    apple: {
-      marca: "Apple",
-      modelos: [
-        "iPhone 15",
-        "iPhone 15 Pro",
-        "iPhone 14",
-        "iPhone 14 Pro",
-        "iPhone 13",
-        "iPhone 13 Pro",
-        "iPhone 12",
-        "iPhone 12 Pro",
-        "iPhone 11",
-        "iPhone SE",
-      ],
-      valoresBase: {
-        "iPhone 15": 800,
-        "iPhone 15 Pro": 950,
-        "iPhone 14": 600,
-        "iPhone 14 Pro": 750,
-        "iPhone 13": 450,
-        "iPhone 13 Pro": 550,
-        "iPhone 12": 350,
-        "iPhone 12 Pro": 400,
-        "iPhone 11": 250,
-        "iPhone SE": 200,
-      },
-    },
-    samsung: {
-      marca: "Samsung",
-      modelos: [
-        "Galaxy S23",
-        "Galaxy S23 Ultra",
-        "Galaxy S22",
-        "Galaxy S22 Ultra",
-        "Galaxy S21",
-        "Galaxy S21 Ultra",
-        "Galaxy Z Flip",
-        "Galaxy Z Fold",
-      ],
-      valoresBase: {
-        "Galaxy S23": 600,
-        "Galaxy S23 Ultra": 800,
-        "Galaxy S22": 450,
-        "Galaxy S22 Ultra": 600,
-        "Galaxy S21": 350,
-        "Galaxy S21 Ultra": 450,
-        "Galaxy Z Flip": 550,
-        "Galaxy Z Fold": 900,
-      },
-    },
-    xiaomi: {
-      marca: "Xiaomi",
-      modelos: [
-        "Redmi Note 13",
-        "Redmi Note 12",
-        "Mi 13",
-        "Mi 12",
-        "Poco X6",
-        "Poco F5",
-      ],
-      valoresBase: {
-        "Redmi Note 13": 200,
-        "Redmi Note 12": 150,
-        "Mi 13": 350,
-        "Mi 12": 280,
-        "Poco X6": 180,
-        "Poco F5": 220,
-      },
-    },
+  // Fetch cotizaciones from backend
+  useEffect(() => {
+    const fetchCotizaciones = async () => {
+      try {
+        const data = await getAllCotizaciones();
+        setCotizaciones(data);
+      } catch (error) {
+        console.error("Error fetching cotizaciones:", error);
+        setCotizaciones([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCotizaciones();
+  }, []);
+
+  // Get unique marcas from cotizaciones
+  const marcasUnicas = [...new Set(cotizaciones.map((c) => c.marca))].filter(
+    Boolean
+  );
+
+  // Get modelos by marca
+  const getModelosPorMarca = (marca) => {
+    return [
+      ...new Set(
+        cotizaciones.filter((c) => c.marca === marca).map((c) => c.modelo)
+      ),
+    ].filter(Boolean);
   };
 
-  // Años disponibles
-  const añoActual = new Date().getFullYear();
-  const años = Array.from({ length: 6 }, (_, i) => añoActual - i);
+  // Get años disponibles for selected modelo
+  const getAñosPorModelo = (marca, modelo) => {
+    return [
+      ...new Set(
+        cotizaciones
+          .filter((c) => c.marca === marca && c.modelo === modelo)
+          .map((c) => c.año)
+      ),
+    ]
+      .filter(Boolean)
+      .sort((a, b) => b - a); // Sort years descending (newest first)
+  };
 
-  // Opciones de almacenamiento
-  const opcionesAlmacenamiento = ["64GB", "128GB", "256GB", "512GB", "1TB"];
+  // Get almacenamiento options for selected modelo and año
+  const getAlmacenamientoPorModeloAño = (marca, modelo, año) => {
+    return [
+      ...new Set(
+        cotizaciones
+          .filter(
+            (c) => c.marca === marca && c.modelo === modelo && c.año === año
+          )
+          .map((c) => c.almacenamiento)
+      ),
+    ].filter(Boolean);
+  };
+
+  // Get precioModelo for selected combination
+  const getPrecioModelo = (marca, modelo, año, almacenamiento) => {
+    const cotizacion = cotizaciones.find(
+      (c) =>
+        c.marca === marca &&
+        c.modelo === modelo &&
+        c.año === año &&
+        c.almacenamiento === almacenamiento
+    );
+    return cotizacion ? cotizacion.precioModelo : null;
+  };
 
   // Manejar cambios en el formulario
   const manejarCambio = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
 
-    // Reiniciar modelo si cambia la marca
     if (name === "marca") {
-      setFormData((prev) => ({ ...prev, modelo: "" }));
+      // Reset all dependent fields when marca changes
+      setFormData({
+        ...formData,
+        marca: value,
+        modelo: "",
+        año: "",
+        almacenamiento: "",
+      });
+    } else if (name === "modelo") {
+      // Reset año and almacenamiento when modelo changes
+      setFormData({
+        ...formData,
+        modelo: value,
+        año: "",
+        almacenamiento: "",
+      });
+    } else if (name === "año") {
+      // Reset almacenamiento when año changes
+      setFormData({
+        ...formData,
+        año: value,
+        almacenamiento: "",
+      });
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -129,8 +143,8 @@ function Cotizaciones() {
     return regex.test(email);
   };
 
-  // Calcular valoración
-  const calcularValoracion = (e) => {
+  // Calcular valoración usando precioModelo from database
+  const calcularValoracion = async (e) => {
     e.preventDefault();
 
     if (
@@ -151,40 +165,46 @@ function Cotizaciones() {
     }
 
     setErrorEmail("");
+    setEnviando(true);
 
-    let valorBase =
-      baseDatosTelefonos[formData.marca]?.valoresBase[formData.modelo] || 300;
+    try {
+      // Get the base price from database
+      const precioBase = getPrecioModelo(
+        formData.marca,
+        formData.modelo,
+        formData.año,
+        formData.almacenamiento
+      );
 
-    // Ajustar por año (depreciación)
-    const diferenciaAños = añoActual - parseInt(formData.año);
-    const multiplicadorAño = Math.max(0.5, 1 - diferenciaAños * 0.15);
-    valorBase *= multiplicadorAño;
+      if (!precioBase) {
+        throw new Error(
+          "No se encontró precio base para la combinación seleccionada"
+        );
+      }
 
-    // Ajustar por estado
-    const multiplicadoresEstado = {
-      nuevo: 1.0,
-      excelente: 0.8,
-      bueno: 0.6,
-      regular: 0.4,
-      malo: 0.2,
-    };
-    valorBase *= multiplicadoresEstado[formData.estado] || 0.5;
+      // valuacion segun condicion
+      const multiplicadoresEstado = {
+        nuevo: 0.8, // 80% of base price for new
+        excelente: 0.7, // 70% for excellent
+        bueno: 0.6, // 60% for good
+        regular: 0.4, // 40% for regular
+        malo: 0.2, // 20% for bad
+      };
 
-    // Ajustar por almacenamiento
-    const multiplicadoresAlmacenamiento = {
-      "64GB": 1.0,
-      "128GB": 1.2,
-      "256GB": 1.4,
-      "512GB": 1.6,
-      "1TB": 1.8,
-    };
-    valorBase *= multiplicadoresAlmacenamiento[formData.almacenamiento] || 1.0;
+      const multiplicador = multiplicadoresEstado[formData.estado] || 0.5;
+      let valorFinal = Math.round(precioBase * multiplicador);
 
-    // Redondear a la decena más cercana
-    const valorFinal = Math.round(valorBase / 10) * 10;
+      // Round to nearest 10 for cleaner presentation
+      valorFinal = Math.round(valorFinal / 10) * 10;
 
-    setValoracion(valorFinal);
-    setMostrarResultado(true);
+      setValoracion(valorFinal);
+      setMostrarResultado(true);
+    } catch (error) {
+      console.error("Error calculando valoración:", error);
+      alert("Error al calcular la valoración. Por favor intenta nuevamente.");
+    } finally {
+      setEnviando(false);
+    }
   };
 
   // Enviar email
@@ -193,11 +213,10 @@ function Cotizaciones() {
     setErrorEmail("");
 
     try {
-      // Configuración de EmailJS - DEBES CONFIGURAR ESTOS DATOS
       const templateParams = {
-        to_email: "maxmurillovargas@gmail.com", // Cambia por tu email corporativo
+        to_email: "maxmurillovargas@gmail.com",
         from_email: formData.email,
-        marca: baseDatosTelefonos[formData.marca]?.marca || formData.marca,
+        marca: formData.marca,
         modelo: formData.modelo,
         año: formData.año,
         estado: formData.estado,
@@ -205,28 +224,39 @@ function Cotizaciones() {
         valoracion: `$${valoracion} USD`,
         user_email: formData.email,
         fecha: new Date().toLocaleDateString("es-ES"),
+        dispositivo: `${formData.marca} ${formData.modelo}`,
+        condicion: formData.estado,
+        almacenamiento_gb: formData.almacenamiento,
       };
 
-      const templateParamsUsuario = {
-        to_email: formData.email, // Email del usuario
-        from_email: "maxmurillovargas@gmail.com", // Tu email corporativo como remitente
-        marca: baseDatosTelefonos[formData.marca]?.marca || formData.marca,
-        modelo: formData.modelo,
-        año: formData.año,
-        estado: formData.estado,
-        almacenamiento: formData.almacenamiento,
-        valoracion: `$${valoracion} USD`,
-        user_email: formData.email,
-        fecha: new Date().toLocaleDateString("es-ES"),
-        tipo: "copia_usuario", // Para identificar en el template
-      };
-
-      // Envía el email usando EmailJS
       await emailjs.send(
-        "service_xdf85a8", // Reemplaza con tu Service ID de EmailJS
-        "template_nk5eycd", // Reemplaza con tu Template ID de EmailJS
+        "service_xdf85a8",
+        "template_nk5eycd",
         templateParams,
-        "3YwkB-C38_6efdthi" // Reemplaza con tu Public Key de EmailJS
+        "3YwkB-C38_6efdthi"
+      );
+
+      const userTemplateParams = {
+        to_email: formData.email, // User's email
+        from_email: "maxmurillovargas@gmail.com", // Your business email
+        marca: formData.marca,
+        modelo: formData.modelo,
+        año: formData.año,
+        estado: formData.estado,
+        almacenamiento: formData.almacenamiento,
+        valoracion: `$${valoracion} USD`,
+        user_email: formData.email,
+        fecha: new Date().toLocaleDateString("es-ES"),
+        dispositivo: `${formData.marca} ${formData.modelo}`,
+        condicion: formData.estado,
+        almacenamiento_gb: formData.almacenamiento,
+      };
+
+      await emailjs.send(
+        "service_xdf85a8",
+        "template_yukfbmq",
+        userTemplateParams,
+        "3YwkB-C38_6efdthi"
       );
 
       setEmailEnviado(true);
@@ -254,6 +284,23 @@ function Cotizaciones() {
     setErrorEmail("");
   };
 
+  if (loading) {
+    return (
+      <Container className="my-5">
+        <Row className="justify-content-center">
+          <Col md={8} lg={6}>
+            <Card className="cotizaciones-card shadow">
+              <Card.Body className="text-center p-5">
+                <Spinner animation="border" variant="primary" />
+                <p className="mt-3">Cargando opciones...</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
   return (
     <Container className="my-5">
       <Row className="justify-content-center">
@@ -278,9 +325,8 @@ function Cotizaciones() {
                     ${valoracion} USD
                   </h3>
                   <p className="mb-3">
-                    Esta es nuestra oferta por tu{" "}
-                    {baseDatosTelefonos[formData.marca]?.marca}{" "}
-                    {formData.modelo}
+                    Esta es nuestra oferta por tu {formData.marca}{" "}
+                    {formData.modelo} ({formData.año}) {formData.almacenamiento}
                   </p>
 
                   {emailEnviado ? (
@@ -361,9 +407,9 @@ function Cotizaciones() {
                       required
                     >
                       <option value="">Selecciona una marca</option>
-                      {Object.keys(baseDatosTelefonos).map((marca) => (
+                      {marcasUnicas.map((marca) => (
                         <option key={marca} value={marca}>
-                          {baseDatosTelefonos[marca].marca}
+                          {marca}
                         </option>
                       ))}
                     </Form.Select>
@@ -382,13 +428,11 @@ function Cotizaciones() {
                     >
                       <option value="">Selecciona un modelo</option>
                       {formData.marca &&
-                        baseDatosTelefonos[formData.marca]?.modelos.map(
-                          (modelo) => (
-                            <option key={modelo} value={modelo}>
-                              {modelo}
-                            </option>
-                          )
-                        )}
+                        getModelosPorMarca(formData.marca).map((modelo) => (
+                          <option key={modelo} value={modelo}>
+                            {modelo}
+                          </option>
+                        ))}
                     </Form.Select>
                   </Form.Group>
 
@@ -401,15 +445,20 @@ function Cotizaciones() {
                       name="año"
                       value={formData.año}
                       onChange={manejarCambio}
+                      disabled={!formData.modelo}
                       className="form-select-personalizado"
                       required
                     >
                       <option value="">Selecciona el año</option>
-                      {años.map((año) => (
-                        <option key={año} value={año}>
-                          {año}
-                        </option>
-                      ))}
+                      {formData.marca &&
+                        formData.modelo &&
+                        getAñosPorModelo(formData.marca, formData.modelo).map(
+                          (año) => (
+                            <option key={año} value={año}>
+                              {año}
+                            </option>
+                          )
+                        )}
                     </Form.Select>
                   </Form.Group>
 
@@ -422,15 +471,23 @@ function Cotizaciones() {
                       name="almacenamiento"
                       value={formData.almacenamiento}
                       onChange={manejarCambio}
+                      disabled={!formData.año}
                       className="form-select-personalizado"
                       required
                     >
                       <option value="">Selecciona almacenamiento</option>
-                      {opcionesAlmacenamiento.map((almacenamiento) => (
-                        <option key={almacenamiento} value={almacenamiento}>
-                          {almacenamiento}
-                        </option>
-                      ))}
+                      {formData.marca &&
+                        formData.modelo &&
+                        formData.año &&
+                        getAlmacenamientoPorModeloAño(
+                          formData.marca,
+                          formData.modelo,
+                          formData.año
+                        ).map((almacenamiento) => (
+                          <option key={almacenamiento} value={almacenamiento}>
+                            {almacenamiento}
+                          </option>
+                        ))}
                     </Form.Select>
                   </Form.Group>
 
@@ -465,8 +522,20 @@ function Cotizaciones() {
                       type="submit"
                       size="lg"
                       className="boton-personalizado"
+                      disabled={enviando}
                     >
-                      Calcular Valoración
+                      {enviando ? (
+                        <>
+                          <Spinner
+                            animation="border"
+                            size="sm"
+                            className="me-2"
+                          />
+                          Calculando...
+                        </>
+                      ) : (
+                        "Calcular Valoración"
+                      )}
                     </Button>
                   </div>
                 </Form>
@@ -480,10 +549,10 @@ function Cotizaciones() {
               <Card.Body>
                 <h5 className="info-titulo">¿Cómo calculamos tu valoración?</h5>
                 <ul className="info-lista">
-                  <li>Precios base según modelo y popularidad</li>
-                  <li>Depreciación por antigüedad del equipo</li>
-                  <li>Ajuste según estado físico</li>
-                  <li>Valor adicional por mayor almacenamiento</li>
+                  <li>Precio base según modelo, año y almacenamiento</li>
+                  <li>Ajuste según estado físico del equipo</li>
+                  <li>Valoraciones basadas en precios de mercado actuales</li>
+                  <li>Ofertas competitivas y transparentes</li>
                 </ul>
                 <p className="text-muted mb-0 info-nota">
                   * Te enviaremos la cotización por email y nos pondremos en

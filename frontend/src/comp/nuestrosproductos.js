@@ -1,66 +1,123 @@
 import { Container } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import { useState, useEffect } from "react";
+import { getAllProducts } from "../services/api";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./styles/nuestrosProductos.css";
+import { Link } from "react-router-dom";
 
 function NuestrosProductos() {
-  const cardData = [
-    {
-      image:
-        "https://http2.mlstatic.com/D_NQ_NP_2X_815144-MHN83582756668_042025-T.webp",
-      title: "Celular A",
-      text: "300 $",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/4/7/474_1.jpeg",
-      title: "Celular B",
-      text: "200 $",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/5/9/597_1.jpeg",
-      title: "Celular C",
-      text: "300 $",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/5/9/597_1.jpeg",
-      title: "Celular D",
-      text: "400 $",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/5/9/597_1.jpeg",
-      title: "Celular E",
-      text: "250 $",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carousel settings
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const productsData = await getAllProducts();
+        setProducts(productsData);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container>
+        <div className="NuestrosProductos-container">
+          <div className="mb-4">
+            <h1 className="h2 fw-bold text-left">Nuestros Productos</h1>
+          </div>
+          <div className="text-center">Cargando productos...</div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <div className="NuestrosProductos-container">
-        <Row className="mb-4">
+        <div className="mb-4">
           <h1 className="h2 fw-bold text-left">Nuestros Productos</h1>
-        </Row>
-        <Row xs={1} md={2} lg={5} className="g-2">
-          {cardData.map((card, idx) => (
-            <Col key={idx}>
-              <Card className="NuestrosProductos-card wide-card">
-                <Card.Img
-                  variant="top"
-                  src={card.image}
-                  className="NuestrosProductos-image"
-                />
-                <Card.Body className="NuestrosProductos-body wide-body"></Card.Body>
-              </Card>
-              <div className="product-info text-center mt-2">
-                <h6 className="product-title mb-1">{card.title}</h6>
-                <p className="product-price mb-0">{card.text}</p>
+        </div>
+
+        {products.length > 0 ? (
+          <Slider {...carouselSettings}>
+            {products.map((product) => (
+              <div key={product._id} className="px-2">
+                <Link
+                  to={`/producto/${product._id}`}
+                  className="text-decoration-none"
+                >
+                  <Card className="NuestrosProductos-card wide-card h-100">
+                    {/* Larger image container */}
+                    <div className="NuestrosProductos-image-container">
+                      <Card.Img
+                        variant="top"
+                        src={product.image?.url || "/placeholder-image.jpg"}
+                        className="NuestrosProductos-image"
+                        alt={product.name}
+                      />
+                    </div>
+
+                    <Card.Body className="NuestrosProductos-body wide-body d-flex flex-column">
+                      <div className="product-info text-center mt-auto">
+                        <h6 className="product-title mb-1">{product.name}</h6>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Link>
               </div>
-            </Col>
-          ))}
-        </Row>
+            ))}
+          </Slider>
+        ) : (
+          <div className="text-center">No hay productos disponibles</div>
+        )}
       </div>
     </Container>
   );

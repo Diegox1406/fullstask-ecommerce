@@ -1,0 +1,224 @@
+/* NuestrosProductos.css - Half the height */
+.NuestrosProductos-container {
+  padding: 2rem 0;
+}
+
+.NuestrosProductos-container .mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.NuestrosProductos-container .h2 {
+  color: #333;
+  font-weight: 700;
+}
+
+/* Card Styles - HALF HEIGHT */
+.NuestrosProductos-card {
+  margin: 0.5rem;
+  border: none;
+  border-radius: 30px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 210px !important; /* CHANGED: Half of 420px */
+  background-color: #fedf9f !important;
+  overflow: hidden;
+}
+
+.NuestrosProductos-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background-color: #fdd88a !important;
+}
+
+/* Image Container - HALF HEIGHT */
+.NuestrosProductos-image-container {
+  height: 125px !important; /* CHANGED: Half of 250px */
+  overflow: hidden;
+  border-radius: 30px 30px 0 0;
+  background-color: #fedf9f;
+}
+
+/* Image Styles - UNCHANGED */
+.NuestrosProductos-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 30px 30px 0 0;
+  transition: transform 0.3s ease;
+}
+
+.NuestrosProductos-card:hover .NuestrosProductos-image {
+  transform: scale(1.05);
+}
+
+/* Card Body - HALF PADDING */
+.NuestrosProductos-body {
+  padding: 0.75rem !important; /* CHANGED: Half of 1.5rem */
+}
+
+.wide-body .card-text {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Product Info - UNCHANGED */
+.product-info {
+  width: 100%;
+}
+
+.product-title {
+  font-size: 0.9rem !important; /* CHANGED: Slightly smaller */
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+  line-height: 1.2;
+  min-height: 1.8em !important; /* CHANGED: Adjusted for smaller card */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Slick Carousel Customization */
+.NuestrosProductos-container .slick-slide {
+  padding: 0 10px;
+}
+
+.NuestrosProductos-container .slick-list {
+  margin: 0 -10px;
+}
+
+.NuestrosProductos-container .slick-prev,
+.NuestrosProductos-container .slick-next {
+  width: 40px;
+  height: 40px;
+  z-index: 1;
+}
+
+.NuestrosProductos-container .slick-prev {
+  left: -45px;
+}
+
+.NuestrosProductos-container .slick-next {
+  right: -45px;
+}
+
+.NuestrosProductos-container .slick-prev:before,
+.NuestrosProductos-container .slick-next:before {
+  font-size: 40px;
+  color: #333;
+  opacity: 0.7;
+}
+
+.NuestrosProductos-container .slick-prev:hover:before,
+.NuestrosProductos-container .slick-next:hover:before {
+  opacity: 1;
+  color: #fedf9f;
+}
+
+.NuestrosProductos-container .slick-dots {
+  bottom: -40px;
+}
+
+.NuestrosProductos-container .slick-dots li button:before {
+  font-size: 12px;
+  color: #fedf9f;
+  opacity: 0.5;
+}
+
+.NuestrosProductos-container .slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #fdd88a;
+}
+
+/* Responsive Design - Half heights */
+@media (max-width: 1200px) {
+  .NuestrosProductos-container .slick-prev {
+    left: -35px;
+  }
+
+  .NuestrosProductos-container .slick-next {
+    right: -35px;
+  }
+}
+
+@media (max-width: 992px) {
+  .NuestrosProductos-card {
+    height: 190px !important; /* CHANGED: Half of 380px */
+  }
+
+  .NuestrosProductos-image-container {
+    height: 110px !important; /* CHANGED: Half of 220px */
+  }
+}
+
+@media (max-width: 768px) {
+  .NuestrosProductos-container {
+    padding: 1rem 0;
+  }
+
+  .NuestrosProductos-card {
+    height: 170px !important; /* CHANGED: Half of 340px */
+  }
+
+  .NuestrosProductos-image-container {
+    height: 90px !important; /* CHANGED: Half of 180px */
+  }
+
+  .NuestrosProductos-body {
+    padding: 0.5rem !important; /* CHANGED: Half of 1rem */
+  }
+
+  .product-title {
+    font-size: 0.8rem !important;
+    min-height: 1.6em !important;
+  }
+
+  .NuestrosProductos-container .slick-prev {
+    left: -25px;
+  }
+
+  .NuestrosProductos-container .slick-next {
+    right: -25px;
+  }
+}
+
+@media (max-width: 576px) {
+  .NuestrosProductos-card {
+    height: 150px !important; /* CHANGED: Half of 300px */
+  }
+
+  .NuestrosProductos-image-container {
+    height: 75px !important; /* CHANGED: Half of 150px */
+  }
+
+  .NuestrosProductos-body {
+    padding: 0.4rem !important; /* CHANGED: Half of 0.8rem */
+  }
+
+  .product-title {
+    font-size: 0.75rem !important;
+    min-height: 1.4em !important;
+  }
+
+  .NuestrosProductos-container .slick-prev,
+  .NuestrosProductos-container .slick-next {
+    display: none !important;
+  }
+}
+
+/* Loading and Empty States */
+.NuestrosProductos-container .text-center {
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Smooth transitions */
+.NuestrosProductos-card,
+.NuestrosProductos-image,
+.product-info {
+  transition: all 0.3s ease-in-out;
+}

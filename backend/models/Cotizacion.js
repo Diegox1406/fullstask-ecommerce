@@ -6,8 +6,8 @@ const CotizacionSchema = new mongoose.Schema(
     modelo: { type: String, required: true },
     año: { type: String, required: true },
     almacenamiento: { type: String, required: true },
+    precioModelo: { type: Number, required: true },
     estado: { type: Boolean, required: true, default: true },
-    email: { type: String, required: true },
   },
   { timestamps: true }
 );

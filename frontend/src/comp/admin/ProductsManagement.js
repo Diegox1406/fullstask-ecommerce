@@ -18,27 +18,24 @@ export default function ProductsManagement() {
     });
     const [imageFile, setImageFile] = useState(null);
 
+    // 1. **MODIFICADO:** Llama a fetchProducts al montar el componente
     useEffect(() => {
-        // Datos de prueba ampliados
-        setProducts([
-            { _id: "1", name: "iPhone 14 Pro Max", category: "Oferta", price: 1199, stock: 15, estado: true, condicion: "Nuevo" },
-            { _id: "2", name: "AirPods Pro 2", category: "Accesorio", price: 249, stock: 30, estado: true, condicion: "Nuevo" },
-            { _id: "3", name: "Cable Lightning", category: "Accesorio", price: 19, stock: 100, estado: true, condicion: "Nuevo" },
-            { _id: "4", name: "iPhone 13", category: "Oferta", price: 799, stock: 8, estado: false, condicion: "Reacondicionado" },
-            { _id: "5", name: "MagSafe Charger", category: "Accesorio", price: 39, stock: 50, estado: true, condicion: "Nuevo" },
-        ]);
+        fetchProducts();
     }, []);
 
     const fetchProducts = async () => {
         try {
-            const data = await request("/api/products");
+            // GET: Carga todos los productos
+            const data = await request("/api/products"); 
             setProducts(data);
         } catch (error) {
             console.error("Error al cargar productos:", error);
+            // Puedes agregar un estado para manejar y mostrar el error al usuario
         }
     };
 
     const handleOpenModal = (product = null) => {
+        // ... (Tu lógica para abrir modal e inicializar formData permanece igual)
         if (product) {
             setEditMode(true);
             setCurrentProduct(product);
@@ -84,36 +81,40 @@ export default function ProductsManagement() {
 
         try {
             if (editMode && currentProduct) {
+                // PUT: Actualiza el producto existente
                 await request(`/api/admin/products/${currentProduct._id}`, {
                     method: "PUT",
                     body: formDataToSend,
-                    headers: {}, // No set Content-Type for FormData
+                    headers: {}, // Correcto para FormData
                 });
             } else {
+                // POST: Crea un nuevo producto
                 await request("/api/admin/products", {
                     method: "POST",
                     body: formDataToSend,
                     headers: {},
                 });
             }
-            fetchProducts();
+            fetchProducts(); // Recarga la lista después de la operación
             handleCloseModal();
         } catch (error) {
-            alert(error.message);
+            alert("Error al guardar producto: " + error.message);
         }
     };
 
     const handleDelete = async (id) => {
         if (!window.confirm("¿Seguro que deseas eliminar este producto?")) return;
         try {
+            // DELETE: Elimina el producto
             await request(`/api/admin/products/${id}`, { method: "DELETE" });
-            fetchProducts();
+            fetchProducts(); // Recarga la lista
         } catch (error) {
-            alert(error.message);
+            alert("Error al eliminar producto: " + error.message);
         }
     };
 
     return (
+        // ... (Tu JSX de la tabla y el Modal permanecen iguales)
         <div>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4>Productos</h4>
@@ -229,8 +230,8 @@ export default function ProductsManagement() {
                                 }
                             >
                                 <option value="Accesorio">Accesorio</option>
-                                <option value="Promocion">Promoción</option>
-                                <option value="Oferta">Oferta</option>
+                                <option value="Smartphone">Smartphone</option>
+                                
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3">

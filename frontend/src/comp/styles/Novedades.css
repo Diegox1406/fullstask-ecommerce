@@ -1,0 +1,109 @@
+/* Novedades.css - 15% shorter cards */
+.novedades-container {
+  padding: 2rem 0;
+}
+
+.novedades-container .mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.novedades-container .h2 {
+  color: #333;
+  font-weight: 700;
+}
+
+/* Card Styles - 15% shorter */
+.novedades-card {
+  border: none;
+  border-radius: 15px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 298px !important; /* CHANGED: 350px * 0.85 = 298px */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.novedades-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Image - 15% shorter */
+.novedades-image {
+  height: 170px !important; /* CHANGED: 200px * 0.85 = 170px */
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 15px 15px 0 0;
+  flex-shrink: 0;
+}
+
+/* Card Body - Vertically Centered */
+.novedades-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 128px !important; /* CHANGED: 150px * 0.85 = 128px */
+}
+
+/* Title with text truncation */
+.novedades-body .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  min-height: 2.6em;
+  width: 100%;
+}
+
+/* Responsive Design - 15% shorter */
+@media (max-width: 768px) {
+  .novedades-card {
+    height: 272px !important; /* CHANGED: 320px * 0.85 = 272px */
+  }
+
+  .novedades-image {
+    height: 153px !important; /* CHANGED: 180px * 0.85 = 153px */
+  }
+
+  .novedades-body {
+    padding: 1rem;
+    min-height: 119px !important; /* CHANGED: 140px * 0.85 = 119px */
+  }
+
+  .novedades-body .card-title {
+    font-size: 1rem;
+    min-height: 2.4em;
+  }
+}
+
+@media (max-width: 576px) {
+  .novedades-card {
+    height: 255px !important; /* CHANGED: 300px * 0.85 = 255px */
+  }
+
+  .novedades-image {
+    height: 136px !important; /* CHANGED: 160px * 0.85 = 136px */
+  }
+
+  .novedades-body {
+    padding: 0.8rem;
+    min-height: 119px !important; /* CHANGED: 140px * 0.85 = 119px */
+  }
+
+  .novedades-body .card-title {
+    font-size: 0.95rem;
+    min-height: 2.2em;
+  }
+}

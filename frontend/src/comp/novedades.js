@@ -2,33 +2,49 @@ import { Container } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getAllProducts } from "../services/api";
+import "./styles/Novedades.css";
 
 function Novedades() {
-  const cardData = [
-    {
-      image:
-        "https://http2.mlstatic.com/D_NQ_NP_2X_815144-MHN83582756668_042025-T.webp",
-      title: "Novedad 1",
-      text: "Texto de novedad 1.",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/4/7/474_1.jpeg",
-      title: "Card title 2",
-      text: "Texto de novedad 2.",
-    },
-    {
-      image:
-        "https://laganga.com/media/catalog/product/cache/48ac97e70dc64bafe85e6c37e44b155d/5/9/597_1.jpeg",
-      title: "Card title 3",
-      text: "Texto de novedad 3.",
-    },
-    {
-      image: "https://m.media-amazon.com/images/I/61k-BSDw8sL._AC_SL1500_.jpg",
-      title: "Card title 4",
-      text: "Texto de novedad 3.",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentProducts = async () => {
+      try {
+        const productsData = await getAllProducts();
+
+        // Sort by createdAt date (newest first) and take first 4
+        const recentProducts = productsData
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 4);
+
+        setProducts(recentProducts);
+      } catch (err) {
+        console.error("Error fetching recent products:", err);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container>
+        <div className="novedades-container">
+          <Row className="mb-4">
+            <h1 className="h2 fw-bold text-left">Novedades</h1>
+          </Row>
+          <div className="text-center">Cargando novedades...</div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -37,22 +53,30 @@ function Novedades() {
           <h1 className="h2 fw-bold text-left">Novedades</h1>
         </Row>
         <Row xs={1} md={2} lg={4} className="g-4">
-          {cardData.map((card, idx) => (
-            <Col key={idx}>
-              <Card className="novedades-card">
-                <Card.Img
-                  variant="top"
-                  src={card.image}
-                  className="novedades-image"
-                />
-                <Card.Body className="novedades-body">
-                  <Card.Title>{card.title}</Card.Title>
-                  <Card.Text>{card.text}</Card.Text>
-                </Card.Body>
-              </Card>
+          {products.map((product) => (
+            <Col key={product._id}>
+              <Link
+                to={`/producto/${product._id}`}
+                className="text-decoration-none"
+              >
+                <Card className="novedades-card">
+                  <Card.Img
+                    variant="top"
+                    src={product.image?.url || "/placeholder-image.jpg"}
+                    className="novedades-image"
+                    alt={product.name}
+                  />
+                  <Card.Body className="novedades-body">
+                    <Card.Title>{product.name}</Card.Title>
+                  </Card.Body>
+                </Card>
+              </Link>
             </Col>
           ))}
         </Row>
+        {products.length === 0 && (
+          <div className="text-center">No hay novedades disponibles</div>
+        )}
       </div>
     </Container>
   );
