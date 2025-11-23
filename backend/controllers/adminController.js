@@ -10,7 +10,7 @@ exports.createProduct = async (req, res) => {
     return res.status(400).json({ message: "Por favor, sube una imagen." });
   }
 
-  const { name, description, price, category, condicion, stock } = req.body;
+  const { name, description, price, category, condicion, stock, oferta, precioOferta, estado } = req.body;
 
   try {
     const product = new Product({
@@ -20,24 +20,72 @@ exports.createProduct = async (req, res) => {
       category,
       condicion,
       stock: Number(stock),
-      estado: true, // Por defecto activo
+      estado: estado === "true",
+      oferta: oferta === "true",
+      precioOferta: Number(precioOferta),
       image: {
-        url: req.file.path, // URL de Cloudinary
-        public_id: req.file.filename, // ID público de Cloudinary
+        url: req.file.path,
+        public_id: req.file.filename,
       },
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
-    // --- MANEJO DE ERROR MEJORADO ---
-    // 1. Muestra el error en tu terminal (para ti)
     console.error("ERROR DETALLADO AL CREAR PRODUCTO:", error);
-
-    // 2. Envía un JSON limpio a Postman
     res.status(500).json({
-      message: "Error interno al guardar el producto. Revisa la consola.",
-      error: error.message, // Este es el mensaje de error real
+      message: "Error interno al guardar el producto.",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Actualizar un producto
+// @route   PUT /api/admin/products/:id
+exports.updateProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Producto no encontrado" });
+
+    const {
+      name,
+      description,
+      price,
+      category,
+      condicion,
+      stock,
+      oferta,
+      precioOferta,
+      estado,
+    } = req.body;
+
+    product.name = name || product.name;
+    product.description = description || product.description;
+    product.category = category || product.category;
+    product.condicion = condicion || product.condicion;
+
+    if (price !== undefined) product.price = Number(price);
+    if (stock !== undefined) product.stock = Number(stock);
+    if (precioOferta !== undefined) product.precioOferta = Number(precioOferta);
+
+    if (estado !== undefined) product.estado = estado === "true";
+    if (oferta !== undefined) product.oferta = oferta === "true";
+
+    if (req.file) {
+      await cloudinary.uploader.destroy(product.image.public_id);
+      product.image = {
+        url: req.file.path,
+        public_id: req.file.filename,
+      };
+    }
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } catch (error) {
+    console.error("ERROR AL ACTUALIZAR PRODUCTO:", error);
+    res.status(500).json({
+      message: "Error al actualizar producto",
+      error: error.message,
     });
   }
 };
@@ -69,49 +117,7 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
-// @desc    Actualizar un producto
-// @route   PUT /api/admin/products/:id
-exports.updateProduct = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
 
-    if (!product) {
-      return res.status(404).json({ message: "Producto no encontrado" });
-    }
-
-    // Actualizar los campos de texto
-    product.name = req.body.name || product.name;
-    product.description = req.body.description || product.description;
-    product.price = req.body.price ? Number(req.body.price) : product.price;
-    product.category = req.body.category || product.category;
-    product.condicion = req.body.condicion || product.condicion;
-    product.stock = req.body.stock ? Number(req.body.stock) : product.stock;
-    product.estado =
-      req.body.estado !== undefined ? req.body.estado : product.estado;
-
-    // --- Manejo de la Imagen (Importante) ---
-    if (req.file) {
-      // 1. Borrar la imagen ANTIGUA de Cloudinary
-      await cloudinary.uploader.destroy(product.image.public_id);
-
-      // 2. Actualizar con la información de la NUEVA imagen
-      product.image = {
-        url: req.file.path,
-        public_id: req.file.filename,
-      };
-    }
-
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-  } catch (error) {
-    // --- MANEJO DE ERROR MEJORADO ---
-    console.error("ERROR AL ACTUALIZAR PRODUCTO:", error);
-    res.status(500).json({
-      message: "Error al actualizar producto",
-      error: error.message,
-    });
-  }
-};
 
 // @desc    Crear un nuevo cotizable
 // @route   POST /api/admin/cotizacion

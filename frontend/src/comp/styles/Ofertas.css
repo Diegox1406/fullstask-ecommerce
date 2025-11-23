@@ -1,69 +1,74 @@
 /* ============================
-   ESTILOS PARA PROMOCIONES
+   ESTILOS PARA OFERTAS
    ============================ */
 
 /* ----- CARD ----- */
-.promos-card {
+.oferta-card {
     border: none;
     background-color: #fedf9f !important;
     border-radius: 30px !important;
     height: 100%;
-    min-height: 430px; /* Ajuste para evitar que el contenido se vea comprimido */
+    min-height: 450px;
     overflow: hidden;
     transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
     box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
 }
 
-.promos-card:hover {
+.oferta-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, .15);
     background-color: #fdd88a !important;
 }
 
-/* ----- CARD IMAGE ----- */
-.promos-img {
-    width: 100% !important;
-    height: 280px !important;        /* Más altura para que la imagen respire */
-    object-fit: contain !important;  /* Mantiene imagen completa sin recortes */
+/* ----- IMAGE ----- */
+.oferta-img {
+    width: 100%;
+    height: 260px;
+    object-fit: contain;
     object-position: center;
-    padding: 0.5rem;
+    background: white;
+    padding: 0.7rem;
     border-radius: 25px 25px 0 0 !important;
-    background: white;               /* Fondo blanco para que las imágenes luzcan mejor */
 }
 
-/* ----- CARD BODY ----- */
-.promos-body {
+/* ----- BODY ----- */
+.oferta-body {
     padding: 1.4rem;
     display: flex;
     flex-direction: column;
 }
 
-.promos-title {
+.oferta-title {
     font-weight: bold;
-    margin-bottom: .4rem;
 }
 
-.promos-regular {
-    font-size: .9rem;
-    color: #c41616;
+.oferta-desc {
+    flex-grow: 1;
+    color: #555;
+}
+
+/* ----- PRECIOS ----- */
+.offer-old-price {
     text-decoration: line-through;
-    margin: 0;
+    color: #c41616;
+    font-size: 0.95rem;
+    display: block;
 }
 
-.promos-oferta {
-    margin-top: auto; /* Empuja hacia abajo */
-    font-size: 1.3rem;
+.offer-new-price {
     font-weight: bold;
+    font-size: 1.35rem;
     color: #15a058;
+    display: block;
 }
 
 /* ----- BOTÓN ----- */
-.promos-btn {
+.oferta-btn {
     background-color: #ff9d2d !important;
     border: none !important;
-    color: #000000 !important;
+    color: #000 !important;
     width: 100%;
-    margin-top: 12px;
     font-weight: bold;
     border-radius: 12px !important;
+    padding: 10px;
 }

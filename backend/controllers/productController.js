@@ -90,6 +90,38 @@ exports.getExhibicion = async (req, res) => {
   }
 };
 
+// @desc    Search products by name and description
+// @route   GET /api/products/search
+exports.searchProducts = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || q.trim().length === 0) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    const products = await Product.find({
+      $and: [
+        { estado: true }, // Only search active products
+        {
+          $or: [
+            { name: { $regex: q, $options: "i" } }, // Search in name
+            { description: { $regex: q, $options: "i" } }, // Search in description
+          ],
+        },
+      ],
+    }).limit(20); // Increased limit since we're searching more fields
+
+    res.json(products);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({
+      message: "Error searching products",
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Obtener un producto por ID
 // @route   GET /api/products/:id
 exports.getProductById = async (req, res) => {

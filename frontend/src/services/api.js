@@ -70,6 +70,10 @@ export async function getOffers() {
   return request("/api/products/ofertas");
 }
 
+export async function searchProducts(query) {
+  return request(`/api/products/search?q=${encodeURIComponent(query)}`);
+}
+
 // Promociones (Lectura)
 export async function getAllPromotions() {
   return request("/api/promotions");
@@ -82,50 +86,96 @@ export async function getPromotions() {
 } // Alias para getAllPromotions
 
 // Promociones (CRUD)
+
 export async function createPromotion(promotionData) {
+  const isFormData = promotionData instanceof FormData;
   return request("/api/admin/promotions", {
     method: "POST",
-    body: JSON.stringify(promotionData),
+    body: isFormData ? promotionData : JSON.stringify(promotionData),
   });
 }
+
 export async function updatePromotion(id, promotionData) {
+  const isFormData = promotionData instanceof FormData;
   return request(`/api/admin/promotions/${id}`, {
     method: "PUT",
-    body: JSON.stringify(promotionData),
+    body: isFormData ? promotionData : JSON.stringify(promotionData),
   });
 }
+
 export async function deletePromotion(id) {
   return request(`/api/admin/promotions/${id}`, { method: "DELETE" });
 }
 
 // Products (Admin CRUD)
+
 export async function createProduct(productData) {
   const formData = new FormData();
+
   formData.append("name", productData.name);
   formData.append("description", productData.description);
   formData.append("price", productData.price);
   formData.append("category", productData.category);
   formData.append("condicion", productData.condicion);
   formData.append("stock", productData.stock);
+
+  if (productData.oferta !== undefined)
+    formData.append("oferta", productData.oferta);
+  if (productData.precioOferta !== undefined)
+    formData.append("precioOferta", productData.precioOferta);
+  if (productData.estado !== undefined)
+    formData.append("estado", productData.estado);
+
   if (productData.image) formData.append("image", productData.image);
-  return request("/api/admin/products", { method: "POST", body: formData });
+
+  return request("/api/admin/products", {
+    method: "POST",
+    body: formData,
+  });
 }
+
+// ---
+
 export async function updateProduct(id, productData) {
   if (productData.image instanceof File) {
     const formData = new FormData();
-    Object.keys(productData).forEach((key) =>
-      formData.append(key, productData[key])
-    );
+
+    Object.keys(productData).forEach((key) => {
+      formData.append(key, productData[key]);
+    });
+
     return request(`/api/admin/products/${id}`, {
       method: "PUT",
       body: formData,
     });
-  } else
-    return request(`/api/admin/products/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(productData),
-    });
+  }
+
+  const payloadConCadenas = { ...productData };
+
+  if (payloadConCadenas.oferta !== undefined) {
+    payloadConCadenas.oferta = String(payloadConCadenas.oferta);
+  }
+  if (payloadConCadenas.estado !== undefined) {
+    payloadConCadenas.estado = String(payloadConCadenas.estado);
+  }
+  if (payloadConCadenas.precioOferta !== undefined) {
+    payloadConCadenas.precioOferta = String(payloadConCadenas.precioOferta);
+  }
+  if (payloadConCadenas.price !== undefined) {
+    payloadConCadenas.price = String(payloadConCadenas.price);
+  }
+  if (payloadConCadenas.stock !== undefined) {
+    payloadConCadenas.stock = String(payloadConCadenas.stock);
+  }
+
+  return request(`/api/admin/products/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payloadConCadenas),
+  });
 }
+
+// ---
+
 export async function deleteProduct(id) {
   return request(`/api/admin/products/${id}`, { method: "DELETE" });
 }

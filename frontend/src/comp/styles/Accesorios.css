@@ -1,56 +1,81 @@
+/* Contenedor general */
 .accesorios-container {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+    margin-bottom: 80px;
 }
 
+/* CARD */
 .accesorio-card {
-  border-radius: 15px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: #fdd88a !important;
-  border-color: #fdd88a !important; /* Borde color accent */
+    background-color: #fedf9f !important; /* MISMO COLOR QUE PROMOCIONES */
+    border-radius: 20px !important;
+    overflow: hidden;
+    border: none !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Hover */
 .accesorio-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: #fdd88a !important; /* MISMO HOVER DE PROMOCIONES */
 }
 
+/* CONTENEDOR DE IMAGEN */
 .image-wrapper {
-  width: 100%;
-  height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8f9fa;
+    height: 240px; /* Más alto para evitar cortes */
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Imagen SIN RECORTAR */
 .accesorio-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  border-bottom: 2px solid #ffbf3f;
-  image-rendering: -webkit-optimize-contrast;
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;  /* <--- LA IMAGEN NO SE CORTA */
+    padding: 10px;
+    background: white;
 }
 
+/* BODY */
 .accesorio-body {
-  padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
 }
 
-.accesorio-body h5 {
-  color: #555;
+.accesorio-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
 }
 
-.accesorio-body p {
-  color: #555;
-  font-size: 0.95rem;
+.accesorio-desc {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 10px;
+    min-height: 50px;
 }
 
-.accesorios-container h1 {
-  color: #1a1a1a;
+/* PRECIO */
+.accesorio-price {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #15a058; /* mismo verde que promociones */
 }
 
-.accesorios-container p {
-  color: #777;
+/* BOTÓN */
+.oferta-btn, .accesorio-btn, .accesorio-body .btn {
+    background-color: #ff9d2d !important; /* MISMO NARANJA DE PROMOCIONES */
+    border: none !important;
+    color: #000 !important;
+    width: 100%;
+    margin-top: 12px;
+    font-weight: bold;
+    border-radius: 12px !important;
+}
+
+.oferta-btn:hover,
+.accesorio-btn:hover {
+    background-color: #ffb347 !important;
 }

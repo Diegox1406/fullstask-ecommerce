@@ -1,154 +1,126 @@
-import {
-  Container,
-  Row,
-  Col,
-  Stack,
-  Image,
-  Nav,
-  NavLink,
-} from "react-bootstrap";
-import { Facebook, Instagram, Book } from "react-bootstrap-icons";
+import { Container, Row, Col, Stack, NavLink } from "react-bootstrap";
+import { Facebook, Instagram } from "react-bootstrap-icons";
+import { FaTiktok, FaWhatsapp } from "react-icons/fa";
+import "./styles/Footer.css";
 
 function Footer() {
   return (
     <footer>
-      <Container fluid>
-        <Row className="p-4" style={{ backgroundColor: "#fedf9f" }}>
-          {/* Productos Column */}
-          <Col>
-            <div className="footer-column">
-              <h6 className="footer-title mb-3 text-start">Productos</h6>
-              <Nav className="flex-column">
-                <NavLink href="#" className="footer-link text-start">
-                  iPhone 15 Series
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  iPhone 14 Series
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  iPhone 13 Series
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Accesorios
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Cables y Cargadores
-                </NavLink>
-              </Nav>
-            </div>
-          </Col>
+      <div style={{ backgroundColor: "#fedf9f" }}>
+        <Container>
+          <Row className="p-4 justify-content-center">
+            {/* IphoneKey Column */}
+            <Col xs={12} md={6} lg={5} className="mb-4 mb-md-0">
+              <div className="footer-column">
+                <h6 className="footer-title mb-3 text-start">IphoneKey</h6>
+                <Stack gap={3}>
+                  <div className="footer-links">
+                    <NavLink href="/ofertas" className="footer-link text-start">
+                      Ofertas
+                    </NavLink>
+                  </div>
+                  <div className="footer-links">
+                    <NavLink
+                      href="/promociones"
+                      className="footer-link text-start"
+                    >
+                      Promociones
+                    </NavLink>
+                  </div>
+                  <div className="footer-links">
+                    <NavLink
+                      href="/accesorios"
+                      className="footer-link text-start"
+                    >
+                      Accesorios
+                    </NavLink>
+                  </div>
+                  <div className="footer-links">
+                    <NavLink
+                      href="/cotizaciones"
+                      className="footer-link text-start"
+                    >
+                      Cotizaciones
+                    </NavLink>
+                  </div>
+                  <div className="footer-links">
+                    <NavLink
+                      href="/contacto"
+                      className="footer-link text-start"
+                    >
+                      Contacto
+                    </NavLink>
+                  </div>
+                </Stack>
+              </div>
+            </Col>
 
-          {/* Servicios Column */}
-          <Col>
-            <div className="footer-column">
-              <h6 className="footer-title mb-3 text-start">Servicios</h6>
-              <Nav className="flex-column">
-                <NavLink href="#" className="footer-link text-start">
-                  Reparación de Pantallas
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Cambio de Batería
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Soporte Técnico
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Garantía Extendida
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Consultoría
-                </NavLink>
-              </Nav>
-            </div>
-          </Col>
+            {/* Nuestras Redes Column */}
+            <Col xs={12} md={6} lg={5}>
+              <div className="footer-column">
+                <h6 className="footer-title mb-3 text-start">Nuestras Redes</h6>
+                <Stack gap={3}>
+                  {/* Instagram */}
+                  <div className="footer-links">
+                    <NavLink
+                      href="https://www.instagram.com/iphonekeyperu/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link text-start"
+                    >
+                      <Instagram size={24} className="me-2" />
+                      Instagram
+                    </NavLink>
+                  </div>
 
-          {/* IphoneKey Column */}
-          <Col>
-            <div className="footer-column">
-              <h6 className="footer-title mb-3 text-start">IphoneKey</h6>
-              <Nav className="flex-column">
-                <NavLink href="#" className="footer-link text-start">
-                  Sobre Nosotros
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Nuestra Historia
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Trabaja con Nosotros
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Contacto
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Ubicaciones
-                </NavLink>
-              </Nav>
-            </div>
-          </Col>
+                  {/* Facebook */}
+                  <div className="footer-links">
+                    <NavLink
+                      href="https://www.facebook.com/share/1RZPXufJty/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link text-start"
+                    >
+                      <Facebook size={24} className="me-2" />
+                      Facebook
+                    </NavLink>
+                  </div>
 
-          {/* Términos y Condiciones Column */}
-          <Col>
-            <div className="footer-column">
-              <h6 className="footer-title mb-3 text-start">
-                Términos y Condiciones
-              </h6>
-              <Nav className="flex-column">
-                <NavLink href="#" className="footer-link text-start">
-                  Política de Privacidad
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Términos de Uso
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Garantías
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Devoluciones
-                </NavLink>
-                <NavLink href="#" className="footer-link text-start">
-                  Preguntas Frecuentes
-                </NavLink>
-              </Nav>
-            </div>
-          </Col>
+                  {/* TikTok */}
+                  <div className="footer-links">
+                    <NavLink
+                      href="https://www.tiktok.com/@iphonekeyperu?_r=1&_t=ZS-91Z6VgZWzQO"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link text-start"
+                    >
+                      <FaTiktok size={24} className="me-2" />
+                      TikTok
+                    </NavLink>
+                  </div>
 
-          {/* Nuestras Redes Column */}
-          <Col>
-            <div className="footer-column">
-              <h6 className="footer-title mb-3 text-start">Nuestras Redes</h6>
-              <Stack gap={3}>
-                {/* Facebook */}
-                <div className="social-links">
-                  <NavLink href="#" className="social-link text-start">
-                    <Facebook size={24} className="me-2" />
-                    Facebook
-                  </NavLink>
-                </div>
-
-                {/* Instagram */}
-                <div className="social-links">
-                  <NavLink href="#" className="social-link text-start">
-                    <Instagram size={24} className="me-2" />
-                    Instagram
-                  </NavLink>
-                </div>
-
-                {/* Libro de Reclamaciones */}
-                <div className="social-links">
-                  <NavLink href="#" className="social-link text-start">
-                    <Book size={24} className="me-2" />
-                    Libro de Reclamaciones
-                  </NavLink>
-                </div>
-              </Stack>
-            </div>
-          </Col>
-        </Row>
-      </Container>
+                  {/* WhatsApp */}
+                  <div className="footer-links">
+                    <NavLink
+                      href="https://wa.me/51934104798"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link text-start"
+                    >
+                      <FaWhatsapp size={24} className="me-2" />
+                      WhatsApp
+                    </NavLink>
+                  </div>
+                </Stack>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
 
       {/* Copyright Bar */}
       <div style={{ backgroundColor: "#333", color: "white" }}>
-        <Container fluid>
+        <Container>
           <Row className="py-3">
             <Col className="text-center">
               <small>© 2024 Iphone Key. Todos los derechos reservados.</small>

@@ -8,7 +8,7 @@ function Carrusel() {
           className="d-block w-100"
           src="/images/banner1.jpg" // This looks in public/images/
           alt="First slide"
-          style={{ height: "400px", objectFit: "cover" }}
+          style={{ height: "500px", objectFit: "contain" }}
         />
         <Carousel.Caption>
           <h3>Primer Banner</h3>
@@ -18,9 +18,9 @@ function Carrusel() {
       <Carousel.Item>
         <img
           className="d-block w-100"
-          src="/images/banner2.jpg" // This looks in public/images/
+          src="/images/banner2.png" // This looks in public/images/
           alt="Second slide"
-          style={{ height: "400px", objectFit: "cover" }}
+          style={{ height: "500px", objectFit: "contain" }}
         />
         <Carousel.Caption>
           <h3>Segundo Banner</h3>
@@ -32,7 +32,7 @@ function Carrusel() {
           className="d-block w-100"
           src="/images/banner3.jpg" // This looks in public/images/
           alt="Third slide"
-          style={{ height: "400px", objectFit: "cover" }}
+          style={{ height: "500px", objectFit: "contain" }}
         />
         <Carousel.Caption>
           <h3>Tercer Banner</h3>

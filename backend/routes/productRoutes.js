@@ -10,6 +10,7 @@ const {
   getReacondicionados,
   getExhibicion,
   getProductById,
+  searchProducts,
 } = require("../controllers/productController");
 
 // Rutas específicas
@@ -21,6 +22,7 @@ router.get("/nuevos", getNuevos); // Ruta para productos Nuevos
 router.get("/usados", getUsados); // Ruta para productos Usados
 router.get("/reacondicionados", getReacondicionados); // Ruta para productos Reacondicionados
 router.get("/exhibicion", getExhibicion); // Ruta para productos de Exhibicion
+router.get("/search", searchProducts);
 
 // IMPORTANTE: La ruta dinámica /:id DEBE ir al final.
 // De lo contrario, Express pensará que "promociones" es un "id".

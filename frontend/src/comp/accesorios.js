@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom"; // Para enlazar al detalle del producto
 import { getAccessories } from "../services/api"; // Importar la función de la API
-import "./styles/Accesorios.css";
+import "../comp/styles/Accesorios.css";
 
 function Accesorios() {
     const [accesorios, setAccesorios] = useState([]);

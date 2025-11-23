@@ -38,8 +38,12 @@ const OfertasCarousel = () => {
     setTimeout(() => setShowAlert(false), 3000);
   };
 
-  const nextSlide = () => { if (offerProducts.length > itemsPerSlide) setIndex(prev => (prev + 1) % offerProducts.length); };
-  const prevSlide = () => { if (offerProducts.length > itemsPerSlide) setIndex(prev => (prev === 0 ? offerProducts.length - 1 : prev - 1)); };
+  const nextSlide = () => {
+    if (offerProducts.length > itemsPerSlide) setIndex(prev => (prev + 1) % offerProducts.length);
+  };
+  const prevSlide = () => {
+    if (offerProducts.length > itemsPerSlide) setIndex(prev => (prev === 0 ? offerProducts.length - 1 : prev - 1));
+  };
 
   const visibleProducts = useMemo(() => {
     if (loading || offerProducts.length === 0) return [];
@@ -57,25 +61,82 @@ const OfertasCarousel = () => {
   return (
     <div className="position-relative mt-4 mb-5">
       {showAlert && (
-        <Alert variant="success" dismissible onClose={() => setShowAlert(false)} style={{ position: 'fixed', top: 80, right: 20, zIndex: 1050, minWidth: '250px' }}>
+        <Alert
+          variant="success"
+          dismissible
+          onClose={() => setShowAlert(false)}
+          style={{ position: 'fixed', top: 80, right: 20, zIndex: 1050, minWidth: '250px' }}
+        >
           ✅ ¡Producto añadido al carrito!
         </Alert>
       )}
-      <div style={{ display: "flex", gap: "15px", overflow: "hidden", width: "100%" }}>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "15px",
+          overflow: "hidden",
+          width: "100%",
+          justifyContent: "center",
+          flexWrap: "nowrap"
+        }}
+      >
         {visibleProducts.map(product => {
-          const isOnOffer = product.oferta === true && product.precioOferta > 0;
-          const displayPrice = isOnOffer ? product.precioOferta : product.price;
-          const oldPrice = isOnOffer ? product.price : null;
+          const hasOffer = product.oferta === true && product.precioOferta > 0;
+          const displayPrice = hasOffer ? product.precioOferta : product.price;
           const imageUrl = product.image?.url || product.image || "https://placehold.co/400x300/a3e1f5/000?text=IMG";
+
           return (
-            <Link to={`/producto/${product._id}`} key={product._id} className="text-decoration-none" style={{ flex: "1" }}>
-              <Card className="h-100 text-center shadow-sm border-0">
-                <Card.Img src={imageUrl} style={{ height: "200px", objectFit: "cover" }} />
-                <Card.Body>
-                  <Card.Title className="fw-bold">{product.name}</Card.Title>
-                  {isOnOffer && <p className="text-danger text-decoration-line-through mb-0">S/ {formatPrice(oldPrice)}</p>}
-                  <p className="text-success fw-bold fs-5 mb-2">S/ {formatPrice(displayPrice)}</p>
-                  <Button variant="warning" className="w-100" onClick={(e) => handleAddToCart(product, e)}>
+            <Link
+              to={`/producto/${product._id}`}
+              key={product._id}
+              className="text-decoration-none"
+              style={{ flex: "0 0 30%", minWidth: "200px" }}
+            >
+              <Card className="shadow-sm border-0" style={{ height: "350px", display: "flex", flexDirection: "column" }}>
+                {/* Contenedor de imagen */}
+                <div style={{
+                  width: "100%",
+                  height: "200px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f5f5f5",
+                  overflow: "hidden",
+                  flexShrink: 0
+                }}>
+                  <Card.Img
+                    src={imageUrl}
+                    style={{
+                      maxHeight: "100%",
+                      width: "auto",
+                      objectFit: "contain"
+                    }}
+                  />
+                </div>
+
+                {/* Cuerpo de la card */}
+                <Card.Body style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <Card.Title
+                      className="fw-bold"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "normal"
+                      }}
+                      title={product.name}
+                    >
+                      {product.name}
+                    </Card.Title>
+
+                    {/* Mostrar solo el precio que corresponde */}
+                    <p className="text-success fw-bold fs-5 mb-2">S/ {formatPrice(displayPrice)}</p>
+                  </div>
+                  <Button variant="warning" className="w-100 mt-auto" onClick={(e) => handleAddToCart(product, e)}>
                     <CartFill className="me-2"/> Agregar
                   </Button>
                 </Card.Body>
@@ -84,8 +145,23 @@ const OfertasCarousel = () => {
           );
         })}
       </div>
-      <Button variant="light" className="position-absolute top-50 start-0 translate-middle-y shadow-sm" style={{ borderRadius: "50%", width: "40px", height: "40px", left: '-15px' }} onClick={prevSlide}>❮</Button>
-      <Button variant="light" className="position-absolute top-50 end-0 translate-middle-y shadow-sm" style={{ borderRadius: "50%", width: "40px", height: "40px", right: '-15px' }} onClick={nextSlide}>❯</Button>
+
+      <Button
+        variant="light"
+        className="position-absolute top-50 start-0 translate-middle-y shadow-sm"
+        style={{ borderRadius: "50%", width: "40px", height: "40px", left: '-15px' }}
+        onClick={prevSlide}
+      >
+        ❮
+      </Button>
+      <Button
+        variant="light"
+        className="position-absolute top-50 end-0 translate-middle-y shadow-sm"
+        style={{ borderRadius: "50%", width: "40px", height: "40px", right: '-15px' }}
+        onClick={nextSlide}
+      >
+        ❯
+      </Button>
     </div>
   );
 };

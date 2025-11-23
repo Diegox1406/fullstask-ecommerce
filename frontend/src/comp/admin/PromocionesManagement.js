@@ -12,7 +12,7 @@ export default function PromocionesManagement() {
   const [submissionError, setSubmissionError] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
-  const [formData, setFormData] = useState({ name: "", description: "", products: [], promoPrice: "", originalPrice: 0, estado: true });
+  const [formData, setFormData] = useState({ name: "", description: "", products: [], promoPrice: "", estado: true });
 
   useEffect(() => { fetchData(); }, []);
 
@@ -20,9 +20,13 @@ export default function PromocionesManagement() {
     setLoading(true);
     try {
       const [promosData, productsData] = await Promise.all([getAllPromotions(), getAllProducts()]);
-      setPromociones(promosData); setProducts(productsData);
-    } catch (error) { console.error("Error al cargar datos:", error); }
-    finally { setLoading(false); }
+      setPromociones(promosData);
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const calculateOriginalPrice = useMemo(() => {
@@ -30,50 +34,89 @@ export default function PromocionesManagement() {
   }, [formData.products, products]);
 
   const handleOpenModal = (promo = null) => {
-    setSubmissionError(null); setImageFile(null);
+    setSubmissionError(null);
+    setImageFile(null);
     if (promo) {
-      setEditMode(true); setCurrentPromo(promo);
-      setFormData({ name: promo.name, description: promo.description, products: promo.products.map(p => p._id), promoPrice: promo.promoPrice, originalPrice: promo.originalPrice, estado: promo.estado });
+      setEditMode(true);
+      setCurrentPromo(promo);
+      setFormData({
+        name: promo.name,
+        description: promo.description,
+        products: promo.products.map(p => p._id),
+        promoPrice: promo.promoPrice,
+        estado: promo.estado
+      });
       setCurrentImageUrl(promo.image?.url || "");
     } else {
-      setEditMode(false); setCurrentPromo(null); setFormData({ name: "", description: "", products: [], promoPrice: "", originalPrice: 0, estado: true });
+      setEditMode(false);
+      setCurrentPromo(null);
+      setFormData({ name: "", description: "", products: [], promoPrice: "", estado: true });
       setCurrentImageUrl("");
     }
     setShowModal(true);
   };
 
-  const handleCloseModal = () => { setShowModal(false); setEditMode(false); setCurrentPromo(null); setSubmissionError(null); setImageFile(null); setCurrentImageUrl(""); };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditMode(false);
+    setCurrentPromo(null);
+    setSubmissionError(null);
+    setImageFile(null);
+    setCurrentImageUrl("");
+  };
 
   const handleCheckboxChange = e => {
-    const productId = e.target.value; const isChecked = e.target.checked;
+    const productId = e.target.value;
+    const isChecked = e.target.checked;
     setFormData(prev => ({ ...prev, products: isChecked ? [...prev.products, productId] : prev.products.filter(id => id !== productId) }));
   };
 
   const handleSubmit = async e => {
-    e.preventDefault(); setSubmissionError(null);
+    e.preventDefault();
+    setSubmissionError(null);
+
     const dataToSend = { ...formData, originalPrice: Number(calculateOriginalPrice), promoPrice: Number(formData.promoPrice) };
+
     if (dataToSend.products.length < 1) { setSubmissionError("Debe seleccionar al menos un producto."); return; }
     if (dataToSend.promoPrice >= dataToSend.originalPrice) { setSubmissionError("El precio promocional debe ser menor al precio original."); return; }
 
     let finalPayload;
+
     if (imageFile) {
       const formDataToSend = new FormData();
-      Object.keys(dataToSend).forEach(key => formDataToSend.append(key, key === "products" ? dataToSend[key].join(",") : key === "estado" ? dataToSend[key].toString() : dataToSend[key]));
-      formDataToSend.append("image", imageFile); finalPayload = formDataToSend;
+      Object.keys(dataToSend).forEach(key => {
+        let value = dataToSend[key];
+        if (key === "products") value = value.join(",");
+        else if (["estado","originalPrice","promoPrice"].includes(key)) value = value.toString();
+        formDataToSend.append(key, value);
+      });
+      formDataToSend.append("image", imageFile);
+      finalPayload = formDataToSend;
     } else if (editMode && currentPromo) {
-      finalPayload = { ...dataToSend, products: dataToSend.products.join(","), estado: dataToSend.estado.toString() };
+      finalPayload = {
+        ...dataToSend,
+        products: dataToSend.products.join(","),
+        estado: dataToSend.estado.toString(),
+        promoPrice: dataToSend.promoPrice.toString(),
+        originalPrice: dataToSend.originalPrice.toString()
+      };
     } else { setSubmissionError("Debe seleccionar una imagen."); return; }
 
     try {
       if (editMode && currentPromo) await updatePromotion(currentPromo._id, finalPayload);
       else await createPromotion(finalPayload);
-      fetchData(); handleCloseModal();
-    } catch (error) { console.error("Error submit:", error); setSubmissionError(error.message || "Error al guardar la promoción."); }
+      fetchData();
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error submit:", error);
+      setSubmissionError(error.message || "Error al guardar la promoción.");
+    }
   };
 
   const handleDelete = async id => {
     if (!window.confirm("¿Seguro que deseas eliminar esta promoción?")) return;
-    try { await deletePromotion(id); fetchData(); } catch (error) { console.error("Error eliminar:", error); alert(error.message || "Error al eliminar la promoción."); }
+    try { await deletePromotion(id); fetchData(); }
+    catch (error) { console.error("Error eliminar:", error); alert(error.message || "Error al eliminar la promoción."); }
   };
 
   if (loading) return <div className="text-center mt-5">Cargando datos de administración...</div>;
@@ -87,7 +130,9 @@ export default function PromocionesManagement() {
       <div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-dark">
-            <tr><th>#</th><th>Nombre</th><th>Productos Incluidos</th><th>Precio Promo</th><th>Precio Original</th><th>Estado</th><th>Acciones</th></tr>
+            <tr>
+              <th>#</th><th>Nombre</th><th>Productos Incluidos</th><th>Precio Promo</th><th>Precio Original</th><th>Estado</th><th>Acciones</th>
+            </tr>
           </thead>
           <tbody>
             {promociones.map((promo, i) => (
@@ -114,22 +159,33 @@ export default function PromocionesManagement() {
         <Modal.Body>
           {submissionError && <Alert variant="danger">{submissionError}</Alert>}
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3"><Form.Label>Nombre</Form.Label><Form.Control type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></Form.Group>
-            <Form.Group className="mb-3"><Form.Label>Descripción</Form.Label><Form.Control as="textarea" rows={3} required value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} /></Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}/>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control as="textarea" rows={3} required value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}/>
+            </Form.Group>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Imagen del Combo ({editMode ? "Opcional" : "Requerido"})</Form.Label>
-              {currentImageUrl && !imageFile && <div className="mb-2"><Image src={currentImageUrl} thumbnail style={{ maxWidth: "100px" }} /><span className="ms-2 text-muted">Imagen actual</span></div>}
-              <Form.Control type="file" accept="image/*" required={!editMode || !currentImageUrl} onChange={e => setImageFile(e.target.files[0])} />
+              {currentImageUrl && !imageFile && <div className="mb-2"><Image src={currentImageUrl} thumbnail style={{ maxWidth: "100px" }}/><span className="ms-2 text-muted">Imagen actual</span></div>}
+              <Form.Control type="file" accept="image/*" required={!editMode && !currentImageUrl} onChange={e => setImageFile(e.target.files[0])}/>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Productos (selecciona múltiples)</Form.Label>
               <div className="border rounded p-2" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                <ListGroup variant="flush">{products.map(p => <ListGroup.Item key={p._id} className="p-1"><Form.Check type="checkbox" id={`product-${p._id}`} label={`${p.name} - $${p.price.toLocaleString()}`} value={p._id} checked={formData.products.includes(p._id)} onChange={handleCheckboxChange} /></ListGroup.Item>)}</ListGroup>
+                <ListGroup variant="flush">{products.map(p => <ListGroup.Item key={p._id} className="p-1"><Form.Check type="checkbox" id={`product-${p._id}`} label={`${p.name} - $${p.price.toLocaleString()}`} value={p._id} checked={formData.products.includes(p._id)} onChange={handleCheckboxChange}/></ListGroup.Item>)}</ListGroup>
               </div>
             </Form.Group>
             <Alert variant="info" className="p-2">Precio Original: <span className="fw-bold float-end">${calculateOriginalPrice.toLocaleString()}</span></Alert>
-            <Form.Group className="mb-3"><Form.Label>Precio Promocional</Form.Label><Form.Control type="number" required min="0" step="0.01" value={formData.promoPrice} onChange={e => setFormData({ ...formData, promoPrice: e.target.value })} /></Form.Group>
-            <Form.Group className="mb-3"><Form.Check type="checkbox" label="Promoción Activa" checked={formData.estado} onChange={e => setFormData({ ...formData, estado: e.target.checked })} /></Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Precio Promocional</Form.Label>
+              <Form.Control type="number" required min="0" step="0.01" value={formData.promoPrice} onChange={e => setFormData({ ...formData, promoPrice: e.target.value })}/>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check type="checkbox" label="Promoción Activa" checked={formData.estado} onChange={e => setFormData({ ...formData, estado: e.target.checked })}/>
+            </Form.Group>
             <Button type="submit" style={{ backgroundColor: "#fedf9f", border: "none", color: "#000", borderRadius: "25px" }} className="w-100 mt-3">{editMode ? "Actualizar Promoción" : "Crear Promoción"}</Button>
           </Form>
         </Modal.Body>

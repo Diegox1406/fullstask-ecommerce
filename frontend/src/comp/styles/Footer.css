@@ -1,0 +1,83 @@
+/* Footer Styles */
+.footer-column {
+  height: 100%;
+  text-align: left;
+}
+
+.footer-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Consistent footer links wrapper */
+.footer-links {
+  background-color: #fed788 !important;
+  border-radius: 12px !important;
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  transition: all 0.2s ease-in-out;
+  border: none !important;
+  text-align: left !important;
+  display: block !important;
+  width: 100%;
+}
+
+.footer-links:hover {
+  background-color: #fdcf6a !important;
+  transform: translateX(5px);
+}
+
+/* Consistent footer link styling */
+.footer-link {
+  color: #333 !important;
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease-in-out;
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+  width: 100%;
+  margin: 0 !important;
+}
+
+.footer-link:hover {
+  color: #000 !important;
+  text-decoration: none !important;
+}
+
+/* Ensure all text in columns is left-aligned */
+.footer-column .nav {
+  text-align: left;
+}
+
+.footer-column .stack {
+  text-align: left;
+  gap: 0.5rem !important; /* Consistent gap */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-column {
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .footer-links {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem !important;
+    text-align: left;
+  }
+}
